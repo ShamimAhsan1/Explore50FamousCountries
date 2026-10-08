@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="TourVerse — Explore 50 world famous countries and 250 iconic tourist destinations with real photos.">
+<title>TourVerse — World Famous Tour Places &amp; Photos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f2f5fa; --card:#ffffff; --ink:#152238; --muted:#5b6b83;
+    --accent1:#ff7e5f; --accent2:#feb47b;
+    --hero1:#0f0c29; --hero2:#302b63; --hero3:#24243e;
+    --chipbg:#eef2f9; --line:#e3e9f2;
+    --shadow:0 6px 22px rgba(21,34,56,.08);
+    --shadow-lg:0 14px 34px rgba(21,34,56,.16);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth}
+  body{font-family:'Poppins',system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  img{display:block}
+  .hide{display:none !important}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 18px}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:linear-gradient(135deg,var(--hero1),var(--hero2) 55%,var(--hero3));
+    color:#fff;text-align:center;padding:clamp(44px,8vw,84px) 16px clamp(40px,7vw,70px);
+    position:relative;overflow:hidden;
+  }
+  .hero::before,.hero::after{
+    content:"";position:absolute;border-radius:50%;filter:blur(2px);opacity:.14;
+    background:radial-gradient(circle at 30% 30%,#fff,transparent 70%);
+  }
+  .hero::before{width:340px;height:340px;top:-120px;left:-90px}
+  .hero::after{width:420px;height:420px;bottom:-190px;right:-120px}
+  .hero .kicker{
+    display:inline-block;font-size:12px;letter-spacing:3px;font-weight:600;text-transform:uppercase;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+    padding:7px 16px;border-radius:999px;margin-bottom:18px;
+  }
+  .hero h1{font-size:clamp(30px,5.4vw,54px);font-weight:800;letter-spacing:-.5px}
+  .hero h1 .grad{background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p.sub{max-width:640px;margin:14px auto 26px;color:#cfd6ea;font-size:clamp(14px,1.8vw,17px)}
+  .stats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:26px}
+  .stat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:10px 18px;font-size:13.5px;font-weight:600}
+  .stat b{font-size:17px;color:var(--accent2)}
+  .searchbox{position:relative;max-width:560px;margin:0 auto}
+  .searchbox input{
+    width:100%;padding:15px 20px 15px 48px;border-radius:999px;border:none;outline:none;
+    font:inherit;font-size:15px;color:var(--ink);box-shadow:var(--shadow-lg);
+  }
+  .searchbox .ic{position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none}
+
+  /* ---------- TOOLBAR ---------- */
+  .toolbar{position:sticky;top:0;z-index:30;background:rgba(242,245,250,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:12px 0}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .chipbtn{
+    border:1.5px solid var(--line);background:#fff;color:var(--muted);font:inherit;font-size:13px;font-weight:600;
+    padding:7px 14px;border-radius:999px;cursor:pointer;transition:.2s;
+  }
+  .chipbtn:hover{border-color:#c9d4e6;transform:translateY(-1px)}
+  .chipbtn.on{background:linear-gradient(135deg,var(--hero2),var(--hero3));color:#fff;border-color:transparent}
+  .count{margin-left:auto;font-size:12.5px;color:var(--muted);font-weight:500}
+
+  /* ---------- COUNTRY GRID ---------- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:18px;padding:26px 0 40px}
+  .card{
+    text-align:left;font:inherit;background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:18px;cursor:pointer;box-shadow:var(--shadow);transition:transform .22s,box-shadow .22s;
+    display:flex;flex-direction:column;gap:9px;
+  }
+  .card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+  .card .flag{width:58px;height:auto;border-radius:6px;box-shadow:0 3px 10px rgba(21,34,56,.18)}
+  .card .cname{font-size:17.5px;font-weight:700;line-height:1.3}
+  .card .cur{font-size:12.5px;color:var(--muted);font-weight:500;background:var(--chipbg);border-radius:8px;padding:5px 9px;display:inline-block;width:fit-content}
+  .card .meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:auto;padding-top:4px}
+  .tag{font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);background:var(--chipbg);padding:4px 9px;border-radius:999px}
+  .tag.go{color:#fff;background:linear-gradient(135deg,var(--accent1),var(--accent2))}
+  .empty{grid-column:1/-1;text-align:center;padding:60px 10px;color:var(--muted);font-size:15px}
+
+  /* ---------- DETAIL VIEW ---------- */
+  .topbar{position:sticky;top:0;z-index:30;background:rgba(242,245,250,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .topbar .bar{display:flex;align-items:center;gap:12px;padding:11px 0}
+  .back{
+    font:inherit;font-size:14px;font-weight:600;color:var(--ink);background:#fff;border:1.5px solid var(--line);
+    border-radius:999px;padding:8px 16px;cursor:pointer;transition:.2s;box-shadow:var(--shadow);
+  }
+  .back:hover{transform:translateX(-3px);border-color:#c9d4e6}
+  .topbar .bt{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chead{display:flex;gap:20px;align-items:center;flex-wrap:wrap;padding:30px 0 8px}
+  .chead .flag{width:84px;height:auto;border-radius:8px;box-shadow:var(--shadow-lg)}
+  .chead h2{font-size:clamp(24px,4vw,38px);font-weight:800;letter-spacing:-.4px}
+  .chead .cur{margin-top:6px;display:inline-flex;align-items:center;gap:7px;background:var(--chipbg);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:13.5px;font-weight:600;color:var(--muted)}
+  .chead .tags{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+  .sectitle{padding:22px 0 4px;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+  .grid.locs{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
+  .loc{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);transition:transform .22s,box-shadow .22s;display:flex;flex-direction:column}
+  .loc:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+  .loc-img{position:relative;aspect-ratio:4/3;background:#dfe6f0;cursor:zoom-in;overflow:hidden}
+  .loc-img img{width:100%;height:100%;object-fit:cover;animation:fade .5s ease}
+  .loc-img .num{position:absolute;top:10px;left:10px;z-index:2;background:rgba(15,12,41,.72);color:#fff;font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:999px;letter-spacing:1px;backdrop-filter:blur(4px)}
+  .loc-img.noimg{cursor:default;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,#1d2b53,#2a4d8f)}
+  .loc-img.noimg .fl{width:72px;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+  .loc-img.noimg .nophoto{color:#cfd6ea;font-size:12px;font-weight:600}
+  .loc .body{padding:15px 16px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .loc h3{font-size:16.5px;font-weight:700}
+  .loc p{font-size:13.5px;color:var(--muted)}
+  .loc .zoom{margin-top:auto;padding-top:8px;font-size:12px;font-weight:600;color:var(--accent1)}
+  .sk{background:linear-gradient(90deg,#e7ecf5 25%,#f4f7fc 50%,#e7ecf5 75%);background-size:200% 100%;animation:sh 1.2s infinite}
+  @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+
+  /* ---------- DEVELOPER ---------- */
+  .dev{padding:46px 18px 26px;display:flex;justify-content:center}
+  .dev-card{
+    display:flex;gap:20px;align-items:center;max-width:560px;width:100%;
+    background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,var(--accent1),#7f5af0) border-box;
+    border:2px solid transparent;border-radius:22px;padding:24px 26px;box-shadow:var(--shadow-lg);
+  }
+  .dev-avatar{
+    width:72px;height:72px;flex:0 0 72px;border-radius:50%;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--hero2),var(--hero3));color:#fff;font-weight:800;font-size:24px;letter-spacing:1px;
+    box-shadow:var(--shadow-lg);
+  }
+  .dev-role{font-size:10.5px;letter-spacing:3px;font-weight:700;color:var(--accent1);text-transform:uppercase}
+  .dev-card h2{font-size:22px;font-weight:800;margin:2px 0 6px}
+  .dev-badge{display:inline-block;background:linear-gradient(135deg,var(--hero2),var(--hero3));color:#fff;font-size:12px;font-weight:700;padding:5px 13px;border-radius:999px;letter-spacing:.5px}
+  .dev-line{margin-top:9px;font-size:12.5px;color:var(--muted)}
+
+  footer{border-top:1px solid var(--line);padding:20px 16px 26px;text-align:center;color:var(--muted);font-size:12.5px}
+  footer b{color:var(--ink)}
+
+  /* ---------- LIGHTBOX ---------- */
+  .lb{position:fixed;inset:0;z-index:100;background:rgba(10,10,22,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;animation:fade .25s}
+  .lb img{max-width:min(1000px,94vw);max-height:76vh;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+  .lb .cap{margin-top:14px;color:#fff;font-size:14.5px;font-weight:600;text-align:center;max-width:90vw}
+  .lb .sub{color:#aab3cf;font-size:12.5px;margin-top:3px}
+  .lb-x{position:absolute;top:16px;right:20px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);color:#fff;width:42px;height:42px;border-radius:50%;font-size:20px;cursor:pointer;transition:.2s}
+  .lb-x:hover{background:rgba(255,255,255,.25)}
+
+  @media (max-width:560px){
+    .grid{gap:13px}
+    .card{padding:15px}
+    .chead{gap:14px}
+    .chead .flag{width:64px}
+    .dev-card{flex-direction:column;text-align:center;padding:26px 20px}
+    .stat{padding:8px 13px;font-size:12px}
+    .count{width:100%;margin-left:0;margin-top:6px}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="kicker">✈️ World Travel Guide</span>
+  <h1>Explore <span class="grad">50 Famous Countries</span><br>&amp; 250 Tour Destinations</h1>
+  <p class="sub">Pick a country, discover its 5 most famous tour places, and see real photos of each destination — with the country's currency shown on every card.</p>
+  <div class="stats">
+    <span class="stat"><b>50</b> Countries</span>
+    <span class="stat"><b>250</b> Destinations</span>
+    <span class="stat"><b>📷</b> Real Photos</span>
+    <span class="stat"><b>💱</b> Currency Info</span>
+  </div>
+  <div class="searchbox">
+    <span class="ic">🔍</span>
+    <input id="search" type="search" placeholder="Search country, currency or place… (e.g. Taka, Bali, Taj Mahal)" autocomplete="off">
+  </div>
+</header>
+
+<!-- COUNTRY LIST -->
+<section id="gridView">
+  <div class="toolbar">
+    <div class="wrap">
+      <div class="chips" id="chips"></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div id="countryGrid" class="grid"></div>
+  </div>
+</section>
+
+<!-- COUNTRY DETAIL -->
+<section id="detailView" class="hide">
+  <div class="topbar">
+    <div class="wrap bar">
+      <button class="back" id="backBtn">← All Countries</button>
+      <span class="bt" id="barTitle"></span>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="chead" id="countryHead"></div>
+    <div class="sectitle">📸 Famous Tour Places</div>
+    <div id="locGrid" class="grid locs"></div>
+  </div>
+</section>
+
+<!-- DEVELOPER SECTION -->
+<section class="dev">
+  <div class="dev-card">
+    <div class="dev-avatar">SA</div>
+    <div>
+      <div class="dev-role">Developed By</div>
+      <h2>Shamim Ahsan</h2>
+      <span class="dev-badge">AI 2nd Batch</span>
+      <p class="dev-line">Graphic Designer · Video Editor · AI Enthusiast</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <b>TourVerse</b> © 2026 · All country photos are loaded live from Wikipedia / Wikimedia Commons.<br>
+  Made with ❤️ by <b>Shamim Ahsan</b> — AI 2nd Batch
+</footer>
+
+<!-- LIGHTBOX -->
+<div id="lb" class="lb hide">
+  <button class="lb-x" id="lbClose" aria-label="Close">✕</button>
+  <img id="lbImg" alt="Tour place photo">
+  <div class="cap" id="lbCap"></div>
+  <div class="sub" id="lbSub"></div>
+</div>
+
+<noscript><p style="text-align:center;padding:20px">Please enable JavaScript to use this app.</p></noscript>
+
+<script>
+/* ================= DATA — 50 countries × 5 famous tour places =================
+   Each place: [display name, Wikipedia page title (for the photo), short description] */
+const DATA=[
+{n:"France",iso:"fr",r:"Europe",c:"Euro (€)",p:[
+["Eiffel Tower","Eiffel Tower","Paris's iron icon and the most-visited paid monument on Earth."],
+["Louvre Museum","Louvre","The world's largest art museum, home of the Mona Lisa."],
+["Palace of Versailles","Palace of Versailles","Opulent royal palace famous for its Hall of Mirrors and gardens."],
+["Mont-Saint-Michel","Mont-Saint-Michel","Fairytale island abbey rising from the tides of Normandy."],
+["French Riviera","French Riviera","Glamorous Mediterranean coastline of Nice, Cannes and Saint-Tropez."]]},
+{n:"Italy",iso:"it",r:"Europe",c:"Euro (€)",p:[
+["Colosseum","Colosseum","Rome's mighty 2,000-year-old amphitheatre of the gladiators."],
+["Venice Canals","Venice","Romantic canal city where gondolas glide past grand palaces."],
+["Leaning Tower of Pisa","Leaning Tower of Pisa","The famous tilted bell tower loved by every photographer."],
+["Amalfi Coast","Amalfi Coast","Dramatic cliffside villages and lemon groves above turquoise seas."],
+["Florence Cathedral","Florence Cathedral","Renaissance masterpiece crowned by Brunelleschi's giant dome."]]},
+{n:"Spain",iso:"es",r:"Europe",c:"Euro (€)",p:[
+["Sagrada Família","Sagrada Família","Gaudí's breathtaking, still-unfinished basilica of Barcelona."],
+["Park Güell","Park Güell","Colourful mosaic wonderland overlooking the city of Barcelona."],
+["Alhambra","Alhambra","Stunning Moorish palace-fortress in the city of Granada."],
+["Ibiza","Ibiza","World-famous Mediterranean island of beaches and nightlife."],
+["Prado Museum","Museo del Prado","Madrid's grand museum of European painting masterpieces."]]},
+{n:"Japan",iso:"jp",r:"Asia",c:"Japanese Yen (¥)",p:[
+["Mount Fuji","Mount Fuji","Japan's sacred snow-capped volcano and national symbol."],
+["Fushimi Inari Shrine","Fushimi Inari-taisha","Kyoto shrine with thousands of vermilion torii gates."],
+["Tokyo Tower","Tokyo Tower","Bright orange landmark tower with sweeping city views."],
+["Arashiyama Bamboo Grove","Arashiyama","Kyoto's enchanting bamboo grove and riverside district."],
+["Osaka Castle","Osaka Castle","Grand white-and-gold castle surrounded by cherry blossoms."]]},
+{n:"United States (USA)",iso:"us",r:"Americas",c:"US Dollar ($)",p:[
+["Grand Canyon","Grand Canyon","A mile-deep natural wonder carved by the Colorado River."],
+["Statue of Liberty","Statue of Liberty","America's symbol of freedom on New York Harbor."],
+["Niagara Falls","Niagara Falls","Thundering waterfalls on the US–Canada border."],
+["Yellowstone","Yellowstone National Park","The world's first national park, with geysers and wildlife."],
+["Golden Gate Bridge","Golden Gate Bridge","San Francisco's iconic red-orange suspension bridge."]]},
+{n:"United Kingdom (UK)",iso:"gb",r:"Europe",c:"Pound Sterling (£)",p:[
+["Big Ben","Big Ben","London's beloved clock tower beside the River Thames."],
+["Tower Bridge","Tower Bridge","Victorian bascule bridge with glass-floor walkways."],
+["Stonehenge","Stonehenge","Mysterious 5,000-year-old stone circle on Salisbury Plain."],
+["Edinburgh Castle","Edinburgh Castle","Mighty fortress crowning Scotland's capital."],
+["Buckingham Palace","Buckingham Palace","The King's London residence and the Changing of the Guard."]]},
+{n:"Switzerland",iso:"ch",r:"Europe",c:"Swiss Franc (CHF)",p:[
+["Matterhorn","Matterhorn","The perfect pyramid peak of the Swiss Alps."],
+["Lake Geneva","Lake Geneva","Sparkling alpine lake framed by glamorous lakeside cities."],
+["Jungfraujoch","Jungfraujoch","The 'Top of Europe' railway station among eternal snows."],
+["Chapel Bridge","Chapel Bridge","Lucerne's medieval wooden bridge with flower decks."],
+["Interlaken","Interlaken","Adventure capital set between two turquoise lakes."]]},
+{n:"Thailand",iso:"th",r:"Asia",c:"Thai Baht (฿)",p:[
+["Grand Palace, Bangkok","Grand Palace, Bangkok","Golden royal complex and the Temple of the Emerald Buddha."],
+["Phi Phi Islands","Ko Phi Phi","Towering limestone islands with dreamy beaches."],
+["Wat Arun","Wat Arun","Riverside 'Temple of Dawn' that sparkles at sunset."],
+["Pattaya Beach","Pattaya","Lively beach city known for water sports and shows."],
+["Doi Suthep Temple","Wat Phra That Doi Suthep","Golden hilltop temple looking over Chiang Mai."]]},
+{n:"Indonesia",iso:"id",r:"Asia",c:"Indonesian Rupiah (Rp)",p:[
+["Kuta Beach, Bali","Kuta","Bali's legendary surf beach and sunset hotspot."],
+["Borobudur","Borobudur","The world's largest Buddhist monument, wrapped in jungle mist."],
+["Komodo National Park","Komodo National Park","Home of the giant Komodo dragons and pink beaches."],
+["Mount Bromo","Mount Bromo","Smoking volcano rising from a lunar sea of sand."],
+["Uluwatu Temple","Uluwatu Temple","Cliff-edge sea temple with fire dances at dusk."]]},
+{n:"Malaysia",iso:"my",r:"Asia",c:"Malaysian Ringgit (RM)",p:[
+["Petronas Towers","Petronas Towers","The world's tallest twin towers, in Kuala Lumpur."],
+["Batu Caves","Batu Caves","Rainbow staircase to a cathedral cave of Hindu shrines."],
+["Langkawi","Langkawi","Duty-free archipelago of beaches and the Sky Bridge."],
+["George Town, Penang","George Town, Penang","Heritage streets filled with street art and food."],
+["Mount Kinabalu","Mount Kinabalu","Borneo's granite giant inside a UNESCO rainforest park."]]},
+{n:"Türkiye (Turkey)",iso:"tr",r:"Middle East",c:"Turkish Lira (₺)",p:[
+["Hagia Sophia","Hagia Sophia","A 1,500-year-old marvel of Byzantine and Ottoman grandeur."],
+["Cappadocia","Cappadocia","Fairy chimneys and a sky full of hot-air balloons."],
+["Pamukkale","Pamukkale","White travertine terraces filled with warm mineral pools."],
+["Blue Mosque","Sultan Ahmed Mosque","Istanbul's mosque tiled in twenty thousand İznik blues."],
+["Ephesus","Ephesus","The best-preserved ancient Roman city of the Mediterranean."]]},
+{n:"Egypt",iso:"eg",r:"Africa",c:"Egyptian Pound (EGP)",p:[
+["Pyramids of Giza","Great Pyramid of Giza","The last standing wonder of the ancient world."],
+["Great Sphinx of Giza","Great Sphinx of Giza","The lion-bodied guardian watching over Giza for 4,500 years."],
+["Luxor Temple","Luxor Temple","Colossal floodlit temple in the world's greatest open-air museum."],
+["Abu Simbel","Abu Simbel","Ramses II's giant rock-cut temples beside Lake Nasser."],
+["Valley of the Kings","Valley of the Kings","Tomb-filled desert valley where Tutankhamun was found."]]},
+{n:"United Arab Emirates (UAE)",iso:"ae",r:"Middle East",c:"UAE Dirham (AED)",p:[
+["Burj Khalifa","Burj Khalifa","The tallest building on Earth — 828 metres of Dubai sky."],
+["Palm Jumeirah","Palm Jumeirah","Man-made palm island of luxury resorts and beaches."],
+["Dubai Fountain","The Dubai Fountain","The world's largest dancing fountain, below the Burj."],
+["Sheikh Zayed Grand Mosque","Sheikh Zayed Grand Mosque","Abu Dhabi's white-marble marvel with crystal chandeliers."],
+["Dubai Mall","The Dubai Mall","Mega-mall with an aquarium, ice rink and 1,200 shops."]]},
+{n:"Saudi Arabia",iso:"sa",r:"Middle East",c:"Saudi Riyal (SAR)",p:[
+["Masjid al-Haram","Great Mosque of Mecca","Islam's holiest mosque, surrounding the sacred Kaaba."],
+["Masjid an-Nabawi","Al-Masjid an-Nabawi","The Prophet's Mosque in Madinah, with its famous green dome."],
+["Hegra, Al-Ula","Hegra","Saudi Arabia's first UNESCO site — 111 carved Nabataean tombs."],
+["Kingdom Centre Tower","Kingdom Centre","Riyadh's skybridge tower with dizzying city views."],
+["Jeddah Corniche","Jeddah","Red Sea waterfront with sculptures and the world's tallest fountain."]]},
+{n:"Maldives",iso:"mv",r:"Asia",c:"Maldivian Rufiyaa (MVR)",p:[
+["Malé","Malé","One of the world's smallest and densest island capitals."],
+["Maafushi Island","Maafushi","Local island famous for guesthouses and crystal lagoons."],
+["Hulhumalé","Hulhumalé","The 'city of hope' built up on a reclaimed island."],
+["Vaadhoo Glowing Beach","Vaadhoo (Raa Atoll)","The bioluminescent 'Sea of Stars' lighting the night shore."],
+["Ari Atoll","Ari Atoll","A diver's paradise for whale sharks and manta rays."]]},
+{n:"Greece",iso:"gr",r:"Europe",c:"Euro (€)",p:[
+["Acropolis of Athens","Acropolis of Athens","The Parthenon crowning the cradle of Western civilisation."],
+["Santorini","Santorini","White villages and blue domes over a volcanic caldera."],
+["Meteora","Meteora","Ancient monasteries balanced on impossible rock pillars."],
+["Delphi","Delphi","Ancient sanctuary of the oracle on Mount Parnassus."],
+["Mykonos","Mykonos","Windmill-lined island of golden beaches and nightlife."]]},
+{n:"Australia",iso:"au",r:"Oceania",c:"Australian Dollar (A$)",p:[
+["Sydney Opera House","Sydney Opera House","The sail-shaped masterpiece on Sydney Harbour."],
+["Great Barrier Reef","Great Barrier Reef","The largest living coral reef system on the planet."],
+["Uluru","Uluru","Sacred red monolith glowing at sunrise and sunset."],
+["Twelve Apostles","Twelve Apostles (Victoria)","Limestone sea stacks along Australia's greatest coastal drive."],
+["Bondi Beach","Bondi Beach","Sydney's surf icon with the stunning coastal walk."]]},
+{n:"New Zealand",iso:"nz",r:"Oceania",c:"New Zealand Dollar (NZ$)",p:[
+["Milford Sound","Milford Sound","Fiordland's rain-carved wonder of waterfalls and peaks."],
+["Hobbiton, Matamata","Matamata, New Zealand","The real Hobbit village from The Lord of the Rings."],
+["Queenstown","Queenstown, New Zealand","The world's adventure capital beside Lake Wakatipu."],
+["Rotorua","Rotorua","Geothermal wonderland of geysers and Māori culture."],
+["Fox Glacier","Fox Glacier","A rare glacier flowing down into temperate rainforest."]]},
+{n:"Canada",iso:"ca",r:"Americas",c:"Canadian Dollar (C$)",p:[
+["Niagara Falls","Niagara Falls","Horseshoe thunder and mist you can sail right into."],
+["Banff National Park","Banff National Park","Turquoise lakes and peaks in the Rocky Mountains."],
+["CN Tower","CN Tower","Toronto's tower with a glass floor 342 m up."],
+["Old Quebec","Old Quebec","A walled, European-style old city on the St. Lawrence."],
+["Moraine Lake","Moraine Lake","The Valley of the Ten Peaks' famous turquoise mirror."]]},
+{n:"Brazil",iso:"br",r:"Americas",c:"Brazilian Real (R$)",p:[
+["Christ the Redeemer","Christ the Redeemer (statue)","The 38-metre Christ embracing Rio from Corcovado mountain."],
+["Copacabana Beach","Copacabana, Rio de Janeiro","The world's most famous 4 km curve of sand."],
+["Iguazu Falls","Iguazu Falls","275 cascades thundering along the Argentine border."],
+["Sugarloaf Mountain","Sugarloaf Mountain","Granite dome with cable-car views over Rio de Janeiro."],
+["Amazon Rainforest","Amazon rainforest","The planet's greatest rainforest, alive with wildlife."]]},
+{n:"Argentina",iso:"ar",r:"Americas",c:"Argentine Peso (ARS)",p:[
+["Perito Moreno Glacier","Perito Moreno Glacier","A living wall of ice that calves into a Patagonian lake."],
+["La Boca, Buenos Aires","La Boca","The colourful tango quarter of Caminito Street."],
+["Aconcagua","Aconcagua","The highest peak in the Americas at 6,961 metres."],
+["Mendoza Wine Country","Mendoza Province","Malbec vineyards resting beneath the Andes."],
+["Tierra del Fuego","Tierra del Fuego","The 'end of the world' wilderness at the continent's tip."]]},
+{n:"Peru",iso:"pe",r:"Americas",c:"Peruvian Sol (S/)",p:[
+["Machu Picchu","Machu Picchu","The lost Inca citadel floating above the clouds."],
+["Sacred Valley","Sacred Valley","Inca terraces, markets and villages through the Andes."],
+["Cusco","Cusco","Ancient Inca capital wrapped in Spanish colonial charm."],
+["Nazca Lines","Nazca Lines","Giant desert geoglyphs visible only from the sky."],
+["Lake Titicaca","Lake Titicaca","The highest navigable lake, home to floating reed islands."]]},
+{n:"Mexico",iso:"mx",r:"Americas",c:"Mexican Peso (MXN)",p:[
+["Chichén Itzá","Chichén Itzá","The Maya pyramid city and a New Wonder of the World."],
+["Tulum","Tulum","Cliff-top Mayan ruins above the Caribbean Sea."],
+["Cancún","Cancún","White sand and turquoise water along the Hotel Zone."],
+["Guanajuato","Guanajuato","A colourful colonial city of alleys and tunnels."],
+["Palenque","Palenque","Maya temples rising out of the Chiapas jungle."]]},
+{n:"South Africa",iso:"za",r:"Africa",c:"South African Rand (ZAR)",p:[
+["Table Mountain","Table Mountain","Cape Town's flat-topped icon with a rotating cableway."],
+["Kruger National Park","Kruger National Park","Big Five safaris across vast African bush."],
+["Cape of Good Hope","Cape of Good Hope","Legendary cliffed cape at Africa's south-western tip."],
+["Boulders Beach","Boulders Beach","Swim beside a colony of African penguins."],
+["Garden Route","Garden Route","Forests, lakes and lagoons along the scenic south coast."]]},
+{n:"Morocco",iso:"ma",r:"Africa",c:"Moroccan Dirham (MAD)",p:[
+["Marrakech Medina","Marrakesh","Souks, snake charmers and the Jemaa el-Fnaa square."],
+["Sahara Desert, Merzouga","Merzouga","Camel treks over the golden Erg Chebbi dunes."],
+["Chefchaouen","Chefchaouen","The famous blue-washed mountain city of the Rif."],
+["Fes el-Bali","Fes el Bali","The world's largest car-free urban medina."],
+["Aït Benhaddou","Aït Benhaddou","A fortified ksar from Gladiator, on the old caravan route."]]},
+{n:"India",iso:"in",r:"Asia",c:"Indian Rupee (₹)",p:[
+["Taj Mahal","Taj Mahal","The world's greatest monument to love, in white marble."],
+["Amber Fort, Jaipur","Amber Fort","Honey-coloured hilltop palace with glittering mirror halls."],
+["Varanasi Ghats","Varanasi","Sacred riverfront rituals on the Ganges."],
+["Kerala Backwaters","Kerala backwaters","Houseboat cruises through palm-lined lagoons."],
+["Golden Temple, Amritsar","Golden Temple","Sikhism's golden sanctuary and its free community kitchen."]]},
+{n:"Nepal",iso:"np",r:"Asia",c:"Nepalese Rupee (NPR)",p:[
+["Mount Everest (Base Camp)","Mount Everest","The roof of the world at 8,849 metres."],
+["Kathmandu Durbar Square","Kathmandu Durbar Square","Palaces and pagodas of the old royal capital."],
+["Pokhara & Phewa Lake","Pokhara","Lakeside calm beneath the Annapurna giants."],
+["Annapurna Circuit","Annapurna Circuit","One of the world's greatest trekking routes."],
+["Lumbini","Lumbini","The sacred birthplace of Lord Buddha."]]},
+{n:"Sri Lanka",iso:"lk",r:"Asia",c:"Sri Lankan Rupee (LKR)",p:[
+["Sigiriya","Sigiriya","Lion-rock fortress with 1,500-year-old frescoes."],
+["Nine Arch Bridge, Ella","Ella, Sri Lanka","The colonial-era viaduct among the tea hills."],
+["Galle Fort","Galle Fort","A Dutch-walled old town on the Indian Ocean."],
+["Yala National Park","Yala National Park","Safari park famous for its elusive leopards."],
+["Temple of the Tooth, Kandy","Sri Dalada Maligawa","Buddhism's most sacred relic shrine."]]},
+{n:"China",iso:"cn",r:"Asia",c:"Chinese Yuan (¥)",p:[
+["Great Wall of China","Great Wall of China","21,000 km of ancient wall snaking over the mountains."],
+["Forbidden City","Forbidden City","The imperial palace of 24 emperors, in Beijing."],
+["Terracotta Army","Terracotta Army","8,000 life-size warriors guarding an emperor's tomb."],
+["Zhangjiajie Forest Park","Zhangjiajie National Forest Park","Sandstone pillars that inspired the floating mountains of Avatar."],
+["Li River, Guilin","Li River (Guangxi)","Karst peaks reflected in a storybook river."]]},
+{n:"South Korea",iso:"kr",r:"Asia",c:"South Korean Won (₩)",p:[
+["Gyeongbokgung Palace","Gyeongbokgung","Seoul's grand royal palace with the changing of guards."],
+["N Seoul Tower","N Seoul Tower","Panoramic city views from Namsan's summit."],
+["Jeju Island","Jeju Island","A volcanic island of waterfalls and lava tubes."],
+["Bukchon Hanok Village","Bukchon Hanok Village","Traditional tiled-roof houses in modern Seoul."],
+["Haeundae Beach","Haeundae Beach","Busan's beloved, broad sandy beach."]]},
+{n:"Singapore",iso:"sg",r:"Asia",c:"Singapore Dollar (S$)",p:[
+["Marina Bay Sands","Marina Bay Sands","Three towers crowned by a rooftop infinity pool."],
+["Gardens by the Bay","Gardens by the Bay","Futuristic Supertrees and the Cloud Forest dome."],
+["Sentosa","Sentosa","The island resort of beaches, luge and Universal Studios."],
+["Singapore Zoo","Singapore Zoo","World-famous open-concept zoo, famous for orangutans."],
+["Chinatown","Chinatown, Singapore","Heritage shophouses, temples and hawker food."]]},
+{n:"Vietnam",iso:"vn",r:"Asia",c:"Vietnamese Dong (₫)",p:[
+["Ha Long Bay","Ha Long Bay","2,000 limestone islands rising from emerald water."],
+["Hoi An","Hội An","Lantern-lit ancient trading town on the Thu Bồn river."],
+["Sapa","Sa Pa","Rice terraces and misty peaks of northern Vietnam."],
+["Phong Nha Caves","Phong Nha-Ke Bang National Park","Home to Son Doong, the world's largest cave."],
+["Tràng An, Ninh Binh","Tràng An","Boat rides through the karst 'Ha Long Bay on land'."]]},
+{n:"Philippines",iso:"ph",r:"Asia",c:"Philippine Peso (₱)",p:[
+["Boracay","Boracay","White Beach — one of the world's best island beaches."],
+["El Nido, Palawan","El Nido, Palawan","Hidden lagoons and limestone cliffs of Palawan."],
+["Chocolate Hills","Chocolate Hills","Over a thousand cone-shaped hills in Bohol."],
+["Mayon Volcano","Mayon","The world's most perfectly shaped volcano."],
+["Kawasan Falls","Kawasan Falls","A turquoise cascade in the jungles of Cebu."]]},
+{n:"Bangladesh",iso:"bd",r:"Asia",c:"Bangladeshi Taka (৳)",p:[
+["Cox's Bazar","Cox's Bazar","The world's longest natural sea beach — 120 km of sand."],
+["Sundarbans","Sundarbans","The largest mangrove forest, realm of the Royal Bengal Tiger."],
+["Sajek Valley","Sajek","Cloud-kissed hilltop valley of the Chittagong Hill Tracts."],
+["St. Martin's Island","St. Martin's Island","Bangladesh's only coral island paradise."],
+["Jaflong","Jaflong","Tea gardens beside the crystal Piyain river."]]},
+{n:"Netherlands",iso:"nl",r:"Europe",c:"Euro (€)",p:[
+["Canals of Amsterdam","Canals of Amsterdam","The UNESCO canal ring, best explored by boat or bike."],
+["Keukenhof Gardens","Keukenhof","Seven million tulips blooming every spring."],
+["Zaanse Schans","Zaanse Schans","Working 18th-century windmills along the river."],
+["Rijksmuseum","Rijksmuseum","The national museum of Rembrandt's Night Watch."],
+["Kinderdijk","Kinderdijk","A row of 19 historic windmills, straight from a fairytale."]]},
+{n:"Germany",iso:"de",r:"Europe",c:"Euro (€)",p:[
+["Neuschwanstein Castle","Neuschwanstein Castle","The fairytale castle that inspired Disney."],
+["Brandenburg Gate","Brandenburg Gate","Berlin's symbol of unity and freedom."],
+["Cologne Cathedral","Cologne Cathedral","Gothic twin spires that survived World War II."],
+["East Side Gallery","East Side Gallery","The longest surviving stretch of the Berlin Wall."],
+["Black Forest","Black Forest","Tales of the Brothers Grimm among dense green woods."]]},
+{n:"Austria",iso:"at",r:"Europe",c:"Euro (€)",p:[
+["Schönbrunn Palace","Schönbrunn Palace","The Habsburgs' 1,441-room baroque summer home."],
+["Hallstatt","Hallstatt","The postcard lakeside village beneath Alpine peaks."],
+["Hofburg, Vienna","Hofburg","Imperial Vienna's vast palace of the emperors."],
+["Salzburg Old Town","Salzburg","Mozart's birthplace beneath the Hohensalzburg fortress."],
+["Grossglockner High Alpine Road","Großglockner High Alpine Road","One of Europe's most spectacular mountain drives."]]},
+{n:"Portugal",iso:"pt",r:"Europe",c:"Euro (€)",p:[
+["Belém Tower","Belém Tower","The fortified gateway of the Age of Discoveries."],
+["Alfama, Lisbon","Alfama","Lisbon's oldest quarter of fado music and yellow trams."],
+["Porto Riverside","Porto","Port wine cellars facing the Ribeira's stacked houses."],
+["Pena Palace","Pena Palace","A candy-coloured romantic palace above Sintra."],
+["Algarve","Algarve","Golden cliffs, sea caves and 150 beautiful beaches."]]},
+{n:"Norway",iso:"no",r:"Europe",c:"Norwegian Krone (NOK)",p:[
+["Geirangerfjord","Geirangerfjord","Waterfalls like the Seven Sisters plunging into the fjord."],
+["Lofoten Islands","Lofoten","Arctic islands of fishing villages and the midnight sun."],
+["Tromsø — Aurora City","Tromsø","One of the best cities on Earth for northern lights."],
+["Pulpit Rock (Preikestolen)","Preikestolen","A flat cliff hanging 604 metres over Lysefjord."],
+["Bryggen, Bergen","Bryggen","The UNESCO-listed Hanseatic wooden wharf of Bergen."]]},
+{n:"Iceland",iso:"is",r:"Europe",c:"Icelandic Króna (ISK)",p:[
+["Blue Lagoon","Blue Lagoon (geothermal spa)","A milky geothermal spa set in a black lava field."],
+["Geysir, Golden Circle","Great Geysir","The geyser that gave its name to every geyser on Earth."],
+["Seljalandsfoss","Seljalandsfoss","A waterfall you can walk right behind."],
+["Jökulsárlón Glacier Lagoon","Jökulsárlón","Icebergs drifting slowly from a glacier to the sea."],
+["Reynisfjara Black Beach","Reynisfjara","Black sands, basalt columns and roaring surf."]]},
+{n:"Jordan",iso:"jo",r:"Middle East",c:"Jordanian Dinar (JOD)",p:[
+["Petra","Petra","The rose-red city carved into cliffs by the Nabataeans."],
+["Wadi Rum","Wadi Rum","The Martian desert of Lawrence of Arabia fame."],
+["Dead Sea","Dead Sea","Float in the saltiest water, at Earth's lowest point."],
+["Jerash","Jerash","One of the world's best-preserved Roman cities."],
+["Aqaba","Aqaba","Red Sea coral reefs and warm winter water."]]},
+{n:"Croatia",iso:"hr",r:"Europe",c:"Euro (€)",p:[
+["Dubrovnik","Dubrovnik","The walled 'Pearl of the Adriatic' — King's Landing."],
+["Plitvice Lakes","Plitvice Lakes National Park","Sixteen lakes linked by waterfalls and wooden walkways."],
+["Split & Diocletian's Palace","Split, Croatia","A Roman emperor's palace turned living old town."],
+["Hvar","Hvar","A lavender-scented island of sunshine and nightlife."],
+["Zadar","Zadar","Home to a sea-organ that plays music with the waves."]]},
+{n:"Hungary",iso:"hu",r:"Europe",c:"Hungarian Forint (Ft)",p:[
+["Hungarian Parliament","Hungarian Parliament Building","The Gothic-revival giant on the bank of the Danube."],
+["Buda Castle","Buda Castle","The royal palace and museums high over Budapest."],
+["Fisherman's Bastion","Fisherman's Bastion","Fairytale white towers with the best Danube view."],
+["Széchenyi Chain Bridge","Széchenyi Chain Bridge","The first bridge to unite Buda and Pest."],
+["Lake Balaton","Lake Balaton","Central Europe's largest lake — 'the Hungarian Sea'."]]},
+{n:"Czechia (Czech Republic)",iso:"cz",r:"Europe",c:"Czech Koruna (Kč)",p:[
+["Prague Castle","Prague Castle","The largest ancient castle complex in the world."],
+["Charles Bridge","Charles Bridge","Baroque statues line this 600-year-old bridge."],
+["Old Town Square, Prague","Old Town Square (Prague)","The Astronomical Clock and Gothic spires at Prague's heart."],
+["Český Krumlov","Český Krumlov","A storybook town wrapped in a bend of the Vltava."],
+["Karlovy Vary","Karlovy Vary","The grand spa town of hot springs and colonnades."]]},
+{n:"Poland",iso:"pl",r:"Europe",c:"Polish Złoty (zł)",p:[
+["Wieliczka Salt Mine","Wieliczka salt mine","An underground world of chapels carved from salt."],
+["Auschwitz-Birkenau Memorial","Auschwitz-Birkenau State Museum","A sobering memorial of World War II history."],
+["Kraków Old Town","Kraków Old Town","Home to Europe's largest medieval market square."],
+["Warsaw Old Town","Warsaw Old Town","A meticulously rebuilt UNESCO old town on the Vistula."],
+["Tatras, Zakopane","Zakopane","Poland's alpine playground of peaks and wooden villas."]]},
+{n:"Ireland",iso:"ie",r:"Europe",c:"Euro (€)",p:[
+["Cliffs of Moher","Cliffs of Moher","214-metre sea cliffs straight out of a storybook."],
+["Ring of Kerry","Ring of Kerry","Ireland's most scenic loop drive."],
+["Killarney National Park","Killarney National Park","Lakes, mountains and the grand Muckross House."],
+["Trinity College Dublin","Trinity College Dublin","Home of the fabled Book of Kells."],
+["Dingle Peninsula","Dingle Peninsula","A wild Atlantic coast of forts and sandy coves."]]},
+{n:"Belgium",iso:"be",r:"Europe",c:"Euro (€)",p:[
+["Grand Place, Brussels","Grand-Place","Europe's most beautiful medieval square."],
+["Atomium","Atomium","A giant iron-crystal building from the 1958 World's Fair."],
+["Bruges Old Town","Bruges","Medieval canals and chocolate-scented lanes."],
+["Gravensteen Castle, Ghent","Gravensteen","A moated medieval fortress in the city centre."],
+["Cathedral of Our Lady, Antwerp","Cathedral of Our Lady (Antwerp)","Home to Rubens' masterpieces and a 123 m tower."]]},
+{n:"Denmark",iso:"dk",r:"Europe",c:"Danish Krone (DKK)",p:[
+["Tivoli Gardens","Tivoli Gardens","The historic amusement park that inspired Walt Disney."],
+["Nyhavn","Nyhavn","Colourful harbour houses where H.C. Andersen lived."],
+["The Little Mermaid","The Little Mermaid (statue)","Copenhagen's beloved bronze statue by the water."],
+["Kronborg Castle","Kronborg","Hamlet's castle, guarding the Øresund sound."],
+["Egeskov Castle","Egeskov Castle","Europe's best-preserved Renaissance water castle."]]},
+{n:"Kenya",iso:"ke",r:"Africa",c:"Kenyan Shilling (KES)",p:[
+["Maasai Mara","Maasai Mara","The Great Wildebeest Migration and Big Five safaris."],
+["Amboseli National Park","Amboseli National Park","Elephant herds beneath Kilimanjaro's snows."],
+["Diani Beach","Diani Beach","Palm-fringed white sand on the Indian Ocean."],
+["Lake Nakuru","Lake Nakuru","A flamingo-lined soda lake in the Great Rift Valley."],
+["Mount Kenya","Mount Kenya","Africa's second-highest peak and the nation's namesake."]]},
+{n:"Tanzania",iso:"tz",r:"Africa",c:"Tanzanian Shilling (TZS)",p:[
+["Serengeti National Park","Serengeti National Park","The endless plains of the Great Migration."],
+["Mount Kilimanjaro","Mount Kilimanjaro","Africa's rooftop at 5,895 metres."],
+["Zanzibar","Zanzibar","The spice island of Stone Town and white beaches."],
+["Ngorongoro Crater","Ngorongoro Crater","A collapsed volcano crater teeming with wildlife."],
+["Tarangire National Park","Tarangire National Park","Giant baobabs and huge elephant herds."]]}
+];
+
+/* ================= APP LOGIC ================= */
+const $=q=>document.querySelector(q);
+const gridView=$("#gridView"),detailView=$("#detailView"),grid=$("#countryGrid"),
+      locGrid=$("#locGrid"),head=$("#countryHead"),chipsEl=$("#chips"),
+      search=$("#search"),barTitle=$("#barTitle");
+const REGIONS=["All","Asia","Europe","Middle East","Africa","Americas","Oceania"];
+let region="All";
+
+/* --- Wikipedia photo lookup (cached in localStorage) --- */
+const WIKI="https://en.wikipedia.org/api/rest_v1/page/summary/";
+/* Built-in photo map (Wikipedia/Commons lead images) — photos appear instantly; live API stays as fallback */
+const PRELOAD={
+"Louvre":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/Louvre_Museum_Wikimedia_Commons.jpg/330px-Louvre_Museum_Wikimedia_Commons.jpg",
+"Palace of Versailles":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/Vue_a%C3%A9rienne_du_domaine_de_Versailles_par_ToucanWings_-_Creative_Commons_By_Sa_3.0_-_081_%28cropped%29.jpg/330px-Vue_a%C3%A9rienne_du_domaine_de_Versailles_par_ToucanWings_-_Creative_Commons_By_Sa_3.0_-_081_%28cropped%29.jpg",
+"Mont-Saint-Michel":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/78/Mont-Saint-Michel_vu_du_ciel.jpg/330px-Mont-Saint-Michel_vu_du_ciel.jpg",
+"French Riviera":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/%C3%88ze_und_Cap_Ferrat-Grande_Corniche.jpg/330px-%C3%88ze_und_Cap_Ferrat-Grande_Corniche.jpg",
+"Colosseum":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/330px-Colosseo_2020.jpg",
+"Venice":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4f/Venezia_aerial_view.jpg/330px-Venezia_aerial_view.jpg",
+"Leaning Tower of Pisa":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4b/Italy_-_Pisa_-_Leaning_Tower.jpg/330px-Italy_-_Pisa_-_Leaning_Tower.jpg",
+"Amalfi Coast":"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3d/Amalfi_Coast_%28Italy%2C_October_2020%29_-_75_%2850558355441%29.jpg/330px-Amalfi_Coast_%28Italy%2C_October_2020%29_-_75_%2850558355441%29.jpg",
+"Florence Cathedral":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c7/Cattedrale_di_Santa_Maria_del_Fiore_%E2%80%93_Il_Duomo_di_Firenze.jpg/330px-Cattedrale_di_Santa_Maria_del_Fiore_%E2%80%93_Il_Duomo_di_Firenze.jpg",
+"Sagrada Família":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/SF_maig_2_cropped.jpg/330px-SF_maig_2_cropped.jpg",
+"Park Güell":"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Parc_guell_-_panoramio.jpg/330px-Parc_guell_-_panoramio.jpg",
+"Alhambra":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/de/Dawn_Charles_V_Palace_Alhambra_Granada_Andalusia_Spain.jpg/330px-Dawn_Charles_V_Palace_Alhambra_Granada_Andalusia_Spain.jpg",
+"Museo del Prado":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/Museo_del_Prado_2016_%2825185969599%29.jpg/330px-Museo_del_Prado_2016_%2825185969599%29.jpg",
+"Mount Fuji":"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/View_of_Mount_Fuji_from_%C5%8Cwakudani_20211202.jpg/330px-View_of_Mount_Fuji_from_%C5%8Cwakudani_20211202.jpg",
+"Fushimi Inari-taisha":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Torii_path_with_lantern_at_Fushimi_Inari_Taisha_Shrine%2C_Kyoto%2C_Japan.jpg/330px-Torii_path_with_lantern_at_Fushimi_Inari_Taisha_Shrine%2C_Kyoto%2C_Japan.jpg",
+"Tokyo Tower":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/58/Tokyo_Tower_2023.jpg/330px-Tokyo_Tower_2023.jpg",
+"Arashiyama":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/Arashiyama%2C_Part_II_-_Arashiyama7534.jpg/330px-Arashiyama%2C_Part_II_-_Arashiyama7534.jpg",
+"Osaka Castle":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ca/Osaka_Castle_03bs3200.jpg/330px-Osaka_Castle_03bs3200.jpg",
+"Grand Canyon":"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/31/Canyon_River_Tree_%28165872763%29.jpeg/330px-Canyon_River_Tree_%28165872763%29.jpeg",
+"Statue of Liberty":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/Front_view_of_Statue_of_Liberty_%28cropped%29.jpg/330px-Front_view_of_Statue_of_Liberty_%28cropped%29.jpg",
+"Niagara Falls":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/3Falls_Niagara.jpg/330px-3Falls_Niagara.jpg",
+"Yellowstone National Park":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Grand_Canyon_of_the_Yellowstone_Lower_Falls_%2895819p%29.jpg/330px-Grand_Canyon_of_the_Yellowstone_Lower_Falls_%2895819p%29.jpg",
+"Golden Gate Bridge":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bf/Golden_Gate_Bridge_as_seen_from_Battery_East.jpg/330px-Golden_Gate_Bridge_as_seen_from_Battery_East.jpg",
+"Big Ben":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/05/Elizabeth_Tower_and_the_north_front_of_the_Palace_of_Westminster%2C_London.jpg/330px-Elizabeth_Tower_and_the_north_front_of_the_Palace_of_Westminster%2C_London.jpg",
+"Tower Bridge":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/Tower_Bridge_at_Dawn.jpg/330px-Tower_Bridge_at_Dawn.jpg",
+"Stonehenge":"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3c/Stonehenge2007_07_30.jpg/330px-Stonehenge2007_07_30.jpg",
+"Edinburgh Castle":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/City_of_Edinburgh_-_Edinburgh_Castle_-_20140421004403.jpg/330px-City_of_Edinburgh_-_Edinburgh_Castle_-_20140421004403.jpg",
+"Buckingham Palace":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8d/Buckingham_Palace_London_Morning_2020_01_%28cropped%29.jpg/330px-Buckingham_Palace_London_Morning_2020_01_%28cropped%29.jpg",
+"Matterhorn":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Matterhorn_from_Domh%C3%BCtte_-_2.jpg/330px-Matterhorn_from_Domh%C3%BCtte_-_2.jpg",
+"Lake Geneva":"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1b/Lake_Geneva_by_Sentinel-2.jpg/330px-Lake_Geneva_by_Sentinel-2.jpg",
+"Jungfraujoch":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Sphinx_et_Jungfrau_-_img_06980.jpg/330px-Sphinx_et_Jungfrau_-_img_06980.jpg",
+"Chapel Bridge":"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/Kapellbruecke.JPG/330px-Kapellbruecke.JPG",
+"Interlaken":"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/14/Goldswil-Viadukt_Panorama_mit_Interlaken_im_Hintergrund_2.jpg/330px-Goldswil-Viadukt_Panorama_mit_Interlaken_im_Hintergrund_2.jpg",
+"Grand Palace, Bangkok":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c7/0005574_-_Wat_Phra_Kaew_006.jpg/330px-0005574_-_Wat_Phra_Kaew_006.jpg",
+"Ko Phi Phi":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/KohPhiPhi.JPG/330px-KohPhiPhi.JPG",
+"Wat Arun":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%99%E0%B8%97%E0%B8%A3%E0%B8%87%E0%B8%9B%E0%B8%A3%E0%B8%B2%E0%B8%87%E0%B8%84%E0%B9%8C%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AD%E0%B8%A3%E0%B8%B8%E0%B8%932.jpg/330px-%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%99%E0%B8%97%E0%B8%A3%E0%B8%87%E0%B8%9B%E0%B8%A3%E0%B8%B2%E0%B8%87%E0%B8%84%E0%B9%8C%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AD%E0%B8%A3%E0%B8%B8%E0%B8%932.jpg",
+"Pattaya":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ec/Pattaya_beach_from_view_point.jpg/330px-Pattaya_beach_from_view_point.jpg",
+"Wat Phra That Doi Suthep":"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Wat_Phra_That_Doi_Suthep_-_Chiang_Mai.jpg/330px-Wat_Phra_That_Doi_Suthep_-_Chiang_Mai.jpg",
+"Borobudur":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/Pradaksina.jpg/330px-Pradaksina.jpg",
+"Komodo National Park":"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3a/Komodo_dragon_at_Komodo_National_Park.jpg/330px-Komodo_dragon_at_Komodo_National_Park.jpg",
+"Mount Bromo":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8e/Bromo-Semeru-Batok-Widodaren.jpg/330px-Bromo-Semeru-Batok-Widodaren.jpg",
+"Uluwatu Temple":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/Pura_Luhur_Uluwatu_2017-08-17_%2834%29.jpg/330px-Pura_Luhur_Uluwatu_2017-08-17_%2834%29.jpg",
+"Batu Caves":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8f/Batu_Caves_stairs_2022-05.jpg/330px-Batu_Caves_stairs_2022-05.jpg",
+"Langkawi":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6c/Eagle_square_at_Kuah_Langkawi.jpg/330px-Eagle_square_at_Kuah_Langkawi.jpg",
+"George Town, Penang":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Skyline_of_George_Town%2C_Penang_at_night_Nov2024-29-17.jpg/330px-Skyline_of_George_Town%2C_Penang_at_night_Nov2024-29-17.jpg",
+"Mount Kinabalu":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Kinabalu_Sabah_Borneo_Kampong_Kundasang_panorama_2.jpg/330px-Kinabalu_Sabah_Borneo_Kampong_Kundasang_panorama_2.jpg",
+"Hagia Sophia":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Hagia_Sophia_%28228968325%29.jpeg/330px-Hagia_Sophia_%28228968325%29.jpeg",
+"Cappadocia":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/Cappadocia_balloon_trip%2C_Ortahisar_Castle_%2811893715185%29.jpg/330px-Cappadocia_balloon_trip%2C_Ortahisar_Castle_%2811893715185%29.jpg",
+"Pamukkale":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Pamukkale%2C_Denizli_2026_68.jpg/330px-Pamukkale%2C_Denizli_2026_68.jpg",
+"Sultan Ahmed Mosque":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/Istanbul_%2834223582516%29_%28cropped%29.jpg/330px-Istanbul_%2834223582516%29_%28cropped%29.jpg",
+"Ephesus":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/84/Ephesus_Celsus_Library_Fa%C3%A7ade.jpg/330px-Ephesus_Celsus_Library_Fa%C3%A7ade.jpg",
+"Great Pyramid of Giza":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/Great_Pyramid_of_Giza_-_Pyramid_of_Khufu.jpg/330px-Great_Pyramid_of_Giza_-_Pyramid_of_Khufu.jpg",
+"Great Sphinx of Giza":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/Sphinx_with_the_third_pyramid.jpg/330px-Sphinx_with_the_third_pyramid.jpg",
+"Luxor Temple":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/1550_bis_1070_v._Chr._ca._wurde_der_Tempel_von_Luxor_erbaut._01.jpg/330px-1550_bis_1070_v._Chr._ca._wurde_der_Tempel_von_Luxor_erbaut._01.jpg",
+"Abu Simbel":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b5/Ramsis%2C_Aswan_Governorate%2C_Egypt_-_panoramio.jpg/330px-Ramsis%2C_Aswan_Governorate%2C_Egypt_-_panoramio.jpg",
+"Valley of the Kings":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0c/Luxor%2C_Tal_der_K%C3%B6nige_%281995%2C_860x605%29.jpg/330px-Luxor%2C_Tal_der_K%C3%B6nige_%281995%2C_860x605%29.jpg",
+"Burj Khalifa":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/Burj_Khalifa_%28worlds_tallest_building%29_and_the_Dubai_skyline_%2825781049892%29.jpg/330px-Burj_Khalifa_%28worlds_tallest_building%29_and_the_Dubai_skyline_%2825781049892%29.jpg",
+"Palm Jumeirah":"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Artificial_Archipelagos%2C_Dubai%2C_United_Arab_Emirates_ISS022-E-024940_lrg_%28cropped%29.jpg/330px-Artificial_Archipelagos%2C_Dubai%2C_United_Arab_Emirates_ISS022-E-024940_lrg_%28cropped%29.jpg",
+"The Dubai Fountain":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Dubai_Fountain.jpg/330px-Dubai_Fountain.jpg",
+"Sheikh Zayed Grand Mosque":"https://thumb.wikimedia.org/wikipedia/en/thumb/7/7d/Sheikh_Zayed_Mosque_view.jpg/330px-Sheikh_Zayed_Mosque_view.jpg",
+"The Dubai Mall":"https://thumb.wikimedia.org/wikipedia/en/thumb/d/df/Dubai_Mall_10.jpg/330px-Dubai_Mall_10.jpg",
+"Great Mosque of Mecca":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b8/Edited_Great_Mosque_of_Mecca1_5-2019-ccsa4.0_%28cropped%29.jpg/330px-Edited_Great_Mosque_of_Mecca1_5-2019-ccsa4.0_%28cropped%29.jpg",
+"Al-Masjid an-Nabawi":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0c/Masjid_Nabawi_The_Prophet%27s_Mosque%2C_Madina.jpg/330px-Masjid_Nabawi_The_Prophet%27s_Mosque%2C_Madina.jpg",
+"Kingdom Centre":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b2/Kingdom_Centre_Riyadh_2024.jpeg/330px-Kingdom_Centre_Riyadh_2024.jpeg",
+"Jeddah":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/Jeddah_Waterfront%2C_Western_Saudi_Arabia_%282026%29.jpg/330px-Jeddah_Waterfront%2C_Western_Saudi_Arabia_%282026%29.jpg",
+"Malé":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/83/Mal%C3%A9.jpg/330px-Mal%C3%A9.jpg",
+"Hulhumalé":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/Malediven_R%C3%BCckflug_Hulhumale_6.jpg/330px-Malediven_R%C3%BCckflug_Hulhumale_6.jpg",
+"Ari Atoll":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4f/AriAtoll.jpg/330px-AriAtoll.jpg",
+"Acropolis of Athens":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2c/1029_Acropolis_of_Athens_in_Greece_at_night_Photo_by_Giles_Laurent.jpg/330px-1029_Acropolis_of_Athens_in_Greece_at_night_Photo_by_Giles_Laurent.jpg",
+"Santorini":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bf/2011_Dimos_Thiras.png/330px-2011_Dimos_Thiras.png",
+"Meteora":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/Meteora%27s_monastery_2.jpg/330px-Meteora%27s_monastery_2.jpg",
+"Delphi":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d5/Delphi%2C_Greece_-_panoramio.jpg/330px-Delphi%2C_Greece_-_panoramio.jpg",
+"Mykonos":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b2/2011_Dimos_Mykonou.png/330px-2011_Dimos_Mykonou.png",
+"Sydney Opera House":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a0/Sydney_Australia._%2821339175489%29.jpg/330px-Sydney_Australia._%2821339175489%29.jpg",
+"Great Barrier Reef":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4f/ISS-45_StoryOfWater%2C_Great_Barrier_Reef%2C_Australia.jpg/330px-ISS-45_StoryOfWater%2C_Great_Barrier_Reef%2C_Australia.jpg",
+"Uluru":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/ULURU.jpg/330px-ULURU.jpg",
+"Twelve Apostles (Victoria)":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/The_Twelve_Apostles_2011.jpg/330px-The_Twelve_Apostles_2011.jpg",
+"Bondi Beach":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/79/Bondi_from_above.jpg/330px-Bondi_from_above.jpg",
+"Milford Sound":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Milford_Sound_%28New_Zealand%29.JPG/330px-Milford_Sound_%28New_Zealand%29.JPG",
+"Matamata, New Zealand":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/81/Matamata_i-SITE.jpg/330px-Matamata_i-SITE.jpg",
+"Queenstown, New Zealand":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c9/Queenstown_1_%288168013172%29.jpg/330px-Queenstown_1_%288168013172%29.jpg",
+"Rotorua":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5c/Government_Gardens_in_Rotorua_01.jpg/330px-Government_Gardens_in_Rotorua_01.jpg",
+"Fox Glacier":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/20/Fox-Gletscher1.jpg/330px-Fox-Gletscher1.jpg",
+"Banff National Park":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Moraine_Lake_17092005.jpg/330px-Moraine_Lake_17092005.jpg",
+"CN Tower":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/48/CN_Tower_logo.png/330px-CN_Tower_logo.png",
+"Old Quebec":"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/13/Le_tourisme_dans_le_vieux_Qu%C3%A9bec.jpg/330px-Le_tourisme_dans_le_vieux_Qu%C3%A9bec.jpg",
+"Moraine Lake":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Moraine_Lake_17092005.jpg/330px-Moraine_Lake_17092005.jpg",
+"Christ the Redeemer (statue)":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4f/Christ_the_Redeemer_-_Cristo_Redentor.jpg/330px-Christ_the_Redeemer_-_Cristo_Redentor.jpg",
+"Copacabana, Rio de Janeiro":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/Praia_de_Copacabana_-_Rio_de_Janeiro%2C_Brasil.jpg/330px-Praia_de_Copacabana_-_Rio_de_Janeiro%2C_Brasil.jpg",
+"Iguazu Falls":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Aerial_Foz_de_Igua%C3%A7u_26_Nov_2005.jpg/330px-Aerial_Foz_de_Igua%C3%A7u_26_Nov_2005.jpg",
+"Sugarloaf Mountain":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8d/P%C3%A3o_de_A%C3%A7ucar_-_Sugarloaf_Mountain_-_Zuckerhut_-_2022.jpg/330px-P%C3%A3o_de_A%C3%A7ucar_-_Sugarloaf_Mountain_-_Zuckerhut_-_2022.jpg",
+"Amazon rainforest":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/56/Amazon17_%285641020319%29.jpg/330px-Amazon17_%285641020319%29.jpg",
+"Perito Moreno Glacier":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c8/Perito_Moreno_Glacier_2023.jpg/330px-Perito_Moreno_Glacier_2023.jpg",
+"La Boca":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8e/Caminito_in_2026.jpg/330px-Caminito_in_2026.jpg",
+"Aconcagua":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4e/Aconcagua2016.jpg/330px-Aconcagua2016.jpg",
+"Mendoza Province":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/Aconcagua_%28aerial%29.jpg/330px-Aconcagua_%28aerial%29.jpg",
+"Tierra del Fuego":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/NASA_Tierra_del_Fuego_image.jpg/330px-NASA_Tierra_del_Fuego_image.jpg",
+"Machu Picchu":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/Machu_Picchu%2C_2023_%28012%29.jpg/330px-Machu_Picchu%2C_2023_%28012%29.jpg",
+"Sacred Valley":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Urubamba_-_Valle_Sagrado_3.JPG/330px-Urubamba_-_Valle_Sagrado_3.JPG",
+"Cusco":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d7/Vista_Calle_Suecia.jpg/330px-Vista_Calle_Suecia.jpg",
+"Nazca Lines":"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/L%C3%ADneas_de_Nazca%2C_Nazca%2C_Per%C3%BA%2C_2015-07-29%2C_DD_49.JPG/330px-L%C3%ADneas_de_Nazca%2C_Nazca%2C_Per%C3%BA%2C_2015-07-29%2C_DD_49.JPG",
+"Lake Titicaca":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/Lake_Titicaca_ESA22522896.jpeg/330px-Lake_Titicaca_ESA22522896.jpeg",
+"Chichén Itzá":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Chichen_Itza_3.jpg/330px-Chichen_Itza_3.jpg",
+"Tulum":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/85/Tulum_2.jpg/330px-Tulum_2.jpg",
+"Cancún":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d8/Cancun_Strand_Luftbild_%2822143397586%29.jpg/330px-Cancun_Strand_Luftbild_%2822143397586%29.jpg",
+"Palenque":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/Palenque_Collage.jpg/330px-Palenque_Collage.jpg",
+"Table Mountain":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dc/Table_Mountain_DanieVDM.jpg/330px-Table_Mountain_DanieVDM.jpg",
+"Kruger National Park":"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/Kruger_Zebra.JPG/330px-Kruger_Zebra.JPG",
+"Cape of Good Hope":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/Playa_Dias%2C_Cape_Point%2C_Sud%C3%A1frica%2C_2018-07-23%2C_DD_103.jpg/330px-Playa_Dias%2C_Cape_Point%2C_Sud%C3%A1frica%2C_2018-07-23%2C_DD_103.jpg",
+"Boulders Beach":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/Boulders_Beach_Suedafrika.jpg/330px-Boulders_Beach_Suedafrika.jpg",
+"Garden Route":"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1a/Gardenroute_overview.gif/330px-Gardenroute_overview.gif",
+"Marrakesh":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/Pavillon_Menarag%C3%A4rten.jpg/330px-Pavillon_Menarag%C3%A4rten.jpg",
+"Merzouga":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Merzouga%2C_Morocco.jpg/330px-Merzouga%2C_Morocco.jpg",
+"Chefchaouen":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/Chefchaouen-the-blue-city-of-morocco-with-palm-trees-and-the-mountain-view-in-the-backrgound.jpg/330px-Chefchaouen-the-blue-city-of-morocco-with-palm-trees-and-the-mountain-view-in-the-backrgound.jpg",
+"Fes el Bali":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Fes_Bab_Bou_Jeloud_2011.jpg/330px-Fes_Bab_Bou_Jeloud_2011.jpg",
+"Aït Benhaddou":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d5/Ksar_A%C3%AFt_Benhaddou%2C_Marocco_%28%D8%A3%D9%8A%D8%AA_%D8%A8%D9%86_%D8%AD%D8%AF%D9%88%D8%8C_%D8%A7%D9%84%D9%85%D8%BA%D8%B1%D8%A8%2C_%E2%B4%B0%E2%B5%A2%E2%B5%9C_%E2%B5%83%E2%B4%B0%E2%B4%B7%E2%B4%B7%E2%B5%93%29.jpg/330px-Ksar_A%C3%AFt_Benhaddou%2C_Marocco_%28%D8%A3%D9%8A%D8%AA_%D8%A8%D9%86_%D8%AD%D8%AF%D9%88%D8%8C_%D8%A7%D9%84%D9%85%D8%BA%D8%B1%D8%A8%2C_%E2%B4%B0%E2%B5%A2%E2%B5%9C_%E2%B5%83%E2%B4%B0%E2%B4%B7%E2%B4%B7%E2%B5%93%29.jpg",
+"Taj Mahal":"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/Taj_Mahal_%28Edited%29.jpeg/330px-Taj_Mahal_%28Edited%29.jpeg",
+"Amber Fort":"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/20191219_Fort_Amber%2C_Amer%2C_Jaipur_0955_9481.jpg/330px-20191219_Fort_Amber%2C_Amer%2C_Jaipur_0955_9481.jpg",
+"Varanasi":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Varanasi%2C_India%2C_Ghats%2C_Cremation_ceremony_in_progress.jpg/330px-Varanasi%2C_India%2C_Ghats%2C_Cremation_ceremony_in_progress.jpg",
+"Kerala backwaters":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ee/House_Boat_DSW.jpg/330px-House_Boat_DSW.jpg",
+"Golden Temple":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/The_Golden_Temple_of_Amrithsar_7.jpg/330px-The_Golden_Temple_of_Amrithsar_7.jpg",
+"Mount Everest":"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/15/Mt._Everest_from_Gokyo_Ri_November_5%2C_2012.jpg/330px-Mt._Everest_from_Gokyo_Ri_November_5%2C_2012.jpg",
+"Kathmandu Durbar Square":"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/Basantapurpalace.JPG/330px-Basantapurpalace.JPG",
+"Pokhara":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9a/Pokhara_Valley.jpg/330px-Pokhara_Valley.jpg",
+"Annapurna Circuit":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/Under_stars_and_snows.jpg/330px-Under_stars_and_snows.jpg",
+"Lumbini":"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/BRP_Lumbini_Mayadevi_temple.jpg/330px-BRP_Lumbini_Mayadevi_temple.jpg",
+"Sigiriya":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e6/Sigiriya_%28141688197%29.jpeg/330px-Sigiriya_%28141688197%29.jpeg",
+"Ella, Sri Lanka":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/47/Ella_railway_station.jpg/330px-Ella_railway_station.jpg",
+"Galle Fort":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Galle_Fort.jpg/330px-Galle_Fort.jpg",
+"Yala National Park":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Yala_Beach.jpg/330px-Yala_Beach.jpg",
+"Sri Dalada Maligawa":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/SL_Kandy_asv2020-01_img33_Sacred_Tooth_Temple.jpg/330px-SL_Kandy_asv2020-01_img33_Sacred_Tooth_Temple.jpg",
+"Great Wall of China":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/The_Great_Wall_of_China_at_Jinshanling-edit.jpg/330px-The_Great_Wall_of_China_at_Jinshanling-edit.jpg",
+"Forbidden City":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/The_Forbidden_City_-_View_from_Coal_Hill.jpg/330px-The_Forbidden_City_-_View_from_Coal_Hill.jpg",
+"Terracotta Army":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/88/51714-Terracota-Army.jpg/330px-51714-Terracota-Army.jpg",
+"Zhangjiajie National Forest Park":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/1_tianzishan_wulingyuan_zhangjiajie_2012.jpg/330px-1_tianzishan_wulingyuan_zhangjiajie_2012.jpg",
+"Li River (Guangxi)":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/87318-Li-River.jpg/330px-87318-Li-River.jpg",
+"Gyeongbokgung":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/63/%EA%B4%91%ED%99%94%EB%AC%B8_%EC%9B%94%EB%8C%80.jpg/330px-%EA%B4%91%ED%99%94%EB%AC%B8_%EC%9B%94%EB%8C%80.jpg",
+"N Seoul Tower":"https://thumb.wikimedia.org/wikipedia/en/thumb/a/a6/NamsanTower_%28Cropped%29.jpeg/330px-NamsanTower_%28Cropped%29.jpeg",
+"Jeju Island":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/Jeju_Island.jpg/330px-Jeju_Island.jpg",
+"Bukchon Hanok Village":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Bukchon_Hanok_Village_01.jpg/330px-Bukchon_Hanok_Village_01.jpg",
+"Haeundae Beach":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ea/Haeundae_Beach_May_2024.jpg/330px-Haeundae_Beach_May_2024.jpg",
+"Marina Bay Sands":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c7/Marina_Bay_Sands_%28I%29.jpg/330px-Marina_Bay_Sands_%28I%29.jpg",
+"Gardens by the Bay":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Supertree_Grove%2C_Gardens_by_the_Bay%2C_Singapore_-_20120712-02.jpg/330px-Supertree_Grove%2C_Gardens_by_the_Bay%2C_Singapore_-_20120712-02.jpg",
+"Sentosa":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/1_sentosa_aerial_2016.jpg/330px-1_sentosa_aerial_2016.jpg",
+"Singapore Zoo":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/50/Singapore_Zoo_entrance-15Feb2010.jpg/330px-Singapore_Zoo_entrance-15Feb2010.jpg",
+"Chinatown, Singapore":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Aerial_perspective_of_Singapore%27s_Chinatown.jpg/330px-Aerial_perspective_of_Singapore%27s_Chinatown.jpg",
+"Ha Long Bay":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/79/Ha_Long_Bay_in_2019.jpg/330px-Ha_Long_Bay_in_2019.jpg",
+"Sa Pa":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/56/Sa_Pa.jpg/330px-Sa_Pa.jpg",
+"Phong Nha-Ke Bang National Park":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c9/Phongnhakebang6.jpg/330px-Phongnhakebang6.jpg",
+"Tràng An":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Muaxuantamcoc.jpg/330px-Muaxuantamcoc.jpg",
+"Boracay":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cd/Boracay_White_Beach.png/330px-Boracay_White_Beach.png",
+"El Nido, Palawan":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c7/El_Nido_Bay_December_2018.jpg/330px-El_Nido_Bay_December_2018.jpg",
+"Chocolate Hills":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Chocolate_Hills_Bohol.JPG/330px-Chocolate_Hills_Bohol.JPG",
+"Mayon":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0f/Mount_Mayon_Cagsawa_field_view_close-up_%28Busay%2C_Daraga%2C_Albay%3B_04-21-2023%29.jpg/330px-Mount_Mayon_Cagsawa_field_view_close-up_%28Busay%2C_Daraga%2C_Albay%3B_04-21-2023%29.jpg",
+"Kawasan Falls":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/Kawasan_Falls_Level_1%2C_Badian%2C_Cebu_in_2026.jpg/330px-Kawasan_Falls_Level_1%2C_Badian%2C_Cebu_in_2026.jpg",
+"Cox's Bazar":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/A_dusk_at_Cox%27s_Bazar_sea_beach.jpg/330px-A_dusk_at_Cox%27s_Bazar_sea_beach.jpg",
+"Sundarbans":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/Save_the_sundarbans_20.jpg/330px-Save_the_sundarbans_20.jpg",
+"St. Martin's Island":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Saint_Martins_Island_with_boats_in_foreground.jpg/330px-Saint_Martins_Island_with_boats_in_foreground.jpg",
+"Jaflong":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Zero_Point_at_Zuflong.jpg/330px-Zero_Point_at_Zuflong.jpg",
+"Canals of Amsterdam":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/Imagen_de_los_canales_conc%C3%A9ntricos_en_%C3%81msterdam.png/330px-Imagen_de_los_canales_conc%C3%A9ntricos_en_%C3%81msterdam.png",
+"Keukenhof":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/de/26Y_1599_2.jpg/330px-26Y_1599_2.jpg",
+"Zaanse Schans":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/53/Zaanstad_Zaanse_Schans_22.jpg/330px-Zaanstad_Zaanse_Schans_22.jpg",
+"Rijksmuseum":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/80/South_facade_of_the_Rijksmuseum_Amsterdam_%28DSCF0528%29.jpg/330px-South_facade_of_the_Rijksmuseum_Amsterdam_%28DSCF0528%29.jpg",
+"Kinderdijk":"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/KinderdijkMolens02.jpg/330px-KinderdijkMolens02.jpg",
+"Neuschwanstein Castle":"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/Schloss_Neuschwanstein_2013.jpg/330px-Schloss_Neuschwanstein_2013.jpg",
+"Brandenburg Gate":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/Brandenburger_Tor_abends.jpg/330px-Brandenburger_Tor_abends.jpg",
+"Cologne Cathedral":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/04/K%C3%B6lner_Dom_-_Westfassade_2022_ohne_Ger%C3%BCst-0968_b.jpg/330px-K%C3%B6lner_Dom_-_Westfassade_2022_ohne_Ger%C3%BCst-0968_b.jpg",
+"East Side Gallery":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2b/Segment_with_Graffiti_of_the_Berlin_Wall_%283_of_4%29_%28cropped%29.jpg/330px-Segment_with_Graffiti_of_the_Berlin_Wall_%283_of_4%29_%28cropped%29.jpg",
+"Black Forest":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/Blick_vom_Hohfelsen.jpg/330px-Blick_vom_Hohfelsen.jpg",
+"Schönbrunn Palace":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c9/Wien_-_Schloss_Sch%C3%B6nbrunn.JPG/330px-Wien_-_Schloss_Sch%C3%B6nbrunn.JPG",
+"Hallstatt":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/Hallstatt_-_Zentrum_.JPG/330px-Hallstatt_-_Zentrum_.JPG",
+"Hofburg":"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/31/Wien_-_Neue_Hofburg.JPG/330px-Wien_-_Neue_Hofburg.JPG",
+"Salzburg":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Salzburg_%2848489551981%29.jpg/330px-Salzburg_%2848489551981%29.jpg",
+"Großglockner High Alpine Road":"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3c/Grossglockner_road.jpg/330px-Grossglockner_road.jpg",
+"Belém Tower":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Torre_Bel%C3%A9m_April_2009-4a.jpg/330px-Torre_Bel%C3%A9m_April_2009-4a.jpg",
+"Alfama":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/Lisbon_alfalma.jpg/330px-Lisbon_alfalma.jpg",
+"Porto":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e5/Puente_Don_Luis_I%2C_Oporto%2C_Portugal%2C_2012-05-09%2C_DD_13.JPG/330px-Puente_Don_Luis_I%2C_Oporto%2C_Portugal%2C_2012-05-09%2C_DD_13.JPG",
+"Pena Palace":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/74/Sintra_Portugal_Pal%C3%A1cio_da_Pena-01.jpg/330px-Sintra_Portugal_Pal%C3%A1cio_da_Pena-01.jpg",
+"Algarve":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6e/Pal%C3%A1cio_de_Est%C3%B3i_-_Portugal_%288291585643%29_%28cropped%29.jpg/330px-Pal%C3%A1cio_de_Est%C3%B3i_-_Portugal_%288291585643%29_%28cropped%29.jpg",
+"Geirangerfjord":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/Geirangerfjord_.jpg/330px-Geirangerfjord_.jpg",
+"Lofoten":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/Moskenes_Reinebringen_lub_2025-07-21_img09_Aussicht.jpg/330px-Moskenes_Reinebringen_lub_2025-07-21_img09_Aussicht.jpg",
+"Tromsø":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/Troms%C3%B8_sentrum_%285835702754%29.jpg/330px-Troms%C3%B8_sentrum_%285835702754%29.jpg",
+"Preikestolen":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/85/Lyse_Fjord_et_Preikestolen.jpg/330px-Lyse_Fjord_et_Preikestolen.jpg",
+"Bryggen":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c7/Bryggen%2C_Bergen%2C_Noruega%2C_2019-09-08%2C_DD_115-117_PAN.jpg/330px-Bryggen%2C_Bergen%2C_Noruega%2C_2019-09-08%2C_DD_115-117_PAN.jpg",
+"Blue Lagoon (geothermal spa)":"https://thumb.wikimedia.org/wikipedia/en/thumb/0/00/Blue_Lagoon_Main_Building.JPG/330px-Blue_Lagoon_Main_Building.JPG",
+"Great Geysir":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Erupting_geysir.jpg/330px-Erupting_geysir.jpg",
+"Seljalandsfoss":"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Idyllic_landscape_with_a_waterfall_%28Unsplash%29.jpg/330px-Idyllic_landscape_with_a_waterfall_%28Unsplash%29.jpg",
+"Jökulsárlón":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2c/J%C3%B6kuls%C3%A1rl%C3%B3n_lagoon_in_southeastern_Iceland.jpg/330px-J%C3%B6kuls%C3%A1rl%C3%B3n_lagoon_in_southeastern_Iceland.jpg",
+"Reynisfjara":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/74/Reynisfjara_Beach_Looking_West_Towards_Dyrh%C3%B3laey.jpg/330px-Reynisfjara_Beach_Looking_West_Towards_Dyrh%C3%B3laey.jpg",
+"Petra":"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e8/Al_Deir_Petra.JPG/330px-Al_Deir_Petra.JPG",
+"Wadi Rum":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/56/Mountain_in_Wadi_Rum%2C_Jordan.jpg/330px-Mountain_in_Wadi_Rum%2C_Jordan.jpg",
+"Dead Sea":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/Dead_Sea_beach_00.JPG/330px-Dead_Sea_beach_00.JPG",
+"Jerash":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Oval_Plaza_%28Forum_Romanum%2C_Gerasa_-_Jerash%2C_Jordan%29_-_%D8%B3%D8%A7%D8%AD%D8%A9_%D8%A7%D9%84%D9%86%D8%AF%D9%88%D8%A9%2C_%D8%AC%D8%B1%D8%B4.jpg/330px-Oval_Plaza_%28Forum_Romanum%2C_Gerasa_-_Jerash%2C_Jordan%29_-_%D8%B3%D8%A7%D8%AD%D8%A9_%D8%A7%D9%84%D9%86%D8%AF%D9%88%D8%A9%2C_%D8%AC%D8%B1%D8%B4.jpg",
+"Aqaba":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ae/AQABA_2.png/330px-AQABA_2.png",
+"Dubrovnik":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/67/The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg/330px-The_walls_of_the_fortress_and_View_of_the_old_city._panorama.jpg",
+"Plitvice Lakes National Park":"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/39/View_in_Plitvice_Lakes_National_Park.jpg/330px-View_in_Plitvice_Lakes_National_Park.jpg",
+"Split, Croatia":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Split_080620-133710-IMG_0968x.jpg/330px-Split_080620-133710-IMG_0968x.jpg",
+"Hvar":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/View_of_Hvar_02.jpg/330px-View_of_Hvar_02.jpg",
+"Zadar":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/Roman_Forum_in_Zadar%2C_Croatia_%2848607823862%29.jpg/330px-Roman_Forum_in_Zadar%2C_Croatia_%2848607823862%29.jpg",
+"Hungarian Parliament Building":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/Hungarian_Parliament_Building_from_across_the_Danube%2C_2025-01-11.jpg/330px-Hungarian_Parliament_Building_from_across_the_Danube%2C_2025-01-11.jpg",
+"Buda Castle":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5c/Budav%C3%A1ri_Palota%2C_ABCDEF_%C3%A9p%C3%BClet.jpg/330px-Budav%C3%A1ri_Palota%2C_ABCDEF_%C3%A9p%C3%BClet.jpg",
+"Fisherman's Bastion":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/Hal%C3%A1szb%C3%A1stya_2017.jpg/330px-Hal%C3%A1szb%C3%A1stya_2017.jpg",
+"Széchenyi Chain Bridge":"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/Sz%C3%A9chenyi_Chain_Bridge_in_Budapest_at_night.jpg/330px-Sz%C3%A9chenyi_Chain_Bridge_in_Budapest_at_night.jpg",
+"Lake Balaton":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/Balaton_Hungary_Landscape.jpg/330px-Balaton_Hungary_Landscape.jpg",
+"Prague Castle":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/Karl%C5%AFv_most_Praha%2C_Star%C3%A9_M%C4%9Bsto_20170810_007.jpg/330px-Karl%C5%AFv_most_Praha%2C_Star%C3%A9_M%C4%9Bsto_20170810_007.jpg",
+"Charles Bridge":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/Prague_07-2016_view_from_Lesser_Town_Tower_of_Charles_Bridge_img3.jpg/330px-Prague_07-2016_view_from_Lesser_Town_Tower_of_Charles_Bridge_img3.jpg",
+"Old Town Square (Prague)":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/44/Prague_07-2016_View_from_Old_Town_Hall_Tower_img3.jpg/330px-Prague_07-2016_View_from_Old_Town_Hall_Tower_img3.jpg",
+"Český Krumlov":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/63/Blick_auf_das_Stadtzentrum_von_Krumau_%282026%29.jpg/330px-Blick_auf_das_Stadtzentrum_von_Krumau_%282026%29.jpg",
+"Karlovy Vary":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d8/Karlovy_Vary_Czech.jpg/330px-Karlovy_Vary_Czech.jpg",
+"Wieliczka salt mine":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/80/%CE%91%CE%BB%CE%B1%CF%84%CF%89%CF%81%CF%85%CF%87%CE%B5%CE%AF%CE%B1_%CE%92%CE%B9%CE%B5%CE%BB%CE%AF%CF%84%CF%83%CE%BA%CE%B1_5021.jpg/330px-%CE%91%CE%BB%CE%B1%CF%84%CF%89%CF%81%CF%85%CF%87%CE%B5%CE%AF%CE%B1_%CE%92%CE%B9%CE%B5%CE%BB%CE%AF%CF%84%CF%83%CE%BA%CE%B1_5021.jpg",
+"Auschwitz-Birkenau State Museum":"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/35/Auschwitz_I_%2822_May_2010%29_b.jpg/330px-Auschwitz_I_%2822_May_2010%29_b.jpg",
+"Kraków Old Town":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/UNESCO_World_Heritage_Site%2C_Historic_Centre_of_Krak%C3%B3w%2C_former_quarters%2C_Krak%C3%B3w%2C_Poland.png/330px-UNESCO_World_Heritage_Site%2C_Historic_Centre_of_Krak%C3%B3w%2C_former_quarters%2C_Krak%C3%B3w%2C_Poland.png",
+"Zakopane":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/58/Zakopane_T58.jpg/330px-Zakopane_T58.jpg",
+"Cliffs of Moher":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/Cliffs-Of-Moher-OBriens-From-South.JPG/330px-Cliffs-Of-Moher-OBriens-From-South.JPG",
+"Ring of Kerry":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/41/Atlantic_Ocean%2C_Ring_of_Kerry_%28506559%29_%2827964189752%29.jpg/330px-Atlantic_Ocean%2C_Ring_of_Kerry_%28506559%29_%2827964189752%29.jpg",
+"Killarney National Park":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bc/Ladies_view.jpg/330px-Ladies_view.jpg",
+"Trinity College Dublin":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d7/The_entrance_of_the_historic_Trinity_College_%28Unsplash%29.jpg/330px-The_entrance_of_the_historic_Trinity_College_%28Unsplash%29.jpg",
+"Dingle Peninsula":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/Dingle_Peninsula.png/330px-Dingle_Peninsula.png",
+"Grand-Place":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/Grand-Place%2C_Brussels_-_panorama%2C_June_2018.jpg/330px-Grand-Place%2C_Brussels_-_panorama%2C_June_2018.jpg",
+"Atomium":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/67/The_Atomium_during_civil_twilight_%28DSCF1135%29.jpg/330px-The_Atomium_during_civil_twilight_%28DSCF1135%29.jpg",
+"Bruges":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9a/Br%C3%BCgge_Blick_vom_Belfried_4.jpg/330px-Br%C3%BCgge_Blick_vom_Belfried_4.jpg",
+"Gravensteen":"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/Gent_Gravensteen_R01.jpg/330px-Gent_Gravensteen_R01.jpg",
+"Cathedral of Our Lady (Antwerp)":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/Exterior_of_Onze-Lieve-Vrouwekathedraal_%28Antwerp%29-.jpg/330px-Exterior_of_Onze-Lieve-Vrouwekathedraal_%28Antwerp%29-.jpg",
+"Tivoli Gardens":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/21/Tivoli_Gardens_4.jpg/330px-Tivoli_Gardens_4.jpg",
+"Nyhavn":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/The_Nyhavn_Canal_3.jpg/330px-The_Nyhavn_Canal_3.jpg",
+"The Little Mermaid (statue)":"https://thumb.wikimedia.org/wikipedia/en/thumb/7/7a/Copenhagen_-_the_little_mermaid_statue_-_2013.jpg/330px-Copenhagen_-_the_little_mermaid_statue_-_2013.jpg",
+"Kronborg":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2c/Kronborg_April_2026_10.jpg/330px-Kronborg_April_2026_10.jpg",
+"Egeskov Castle":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Egeskov_Slot_spejling_Edit_2.jpg/330px-Egeskov_Slot_spejling_Edit_2.jpg",
+"Maasai Mara":"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/17/Masai_Mara_at_Sunset.jpg/330px-Masai_Mara_at_Sunset.jpg",
+"Diani Beach":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Diani_Beach_Ukunda.jpg/330px-Diani_Beach_Ukunda.jpg",
+"Lake Nakuru":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9b/Lake-Nakuru-Baboon-Hill-View.JPG/330px-Lake-Nakuru-Baboon-Hill-View.JPG",
+"Mount Kenya":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/09/MtKenya.jpg/330px-MtKenya.jpg",
+"Serengeti National Park":"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0b/Serengeti-Landscape-2012.JPG/330px-Serengeti-Landscape-2012.JPG",
+"Mount Kilimanjaro":"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6c/Kilimanjaro_from_Amboseli.jpg/330px-Kilimanjaro_from_Amboseli.jpg",
+"Ngorongoro Crater":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Ngorongoro-1001-2.jpg/330px-Ngorongoro-1001-2.jpg",
+"Tarangire National Park":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/Tarangine_%2862%29.jpg/330px-Tarangine_%2862%29.jpg",
+"Eiffel Tower":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Tour_eiffel_at_sunrise_from_the_trocadero.jpg/960px-Tour_eiffel_at_sunrise_from_the_trocadero.jpg",
+"Ibiza":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/Balearen%2C_Ibiza%2C_Wanderung_NW_Cala_Codolar_-_Cala_Comte_-_Punta_de_sa_Torre_-_panoramio.jpg/960px-Balearen%2C_Ibiza%2C_Wanderung_NW_Cala_Codolar_-_Cala_Comte_-_Punta_de_sa_Torre_-_panoramio.jpg",
+"Petronas Towers":"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/85/Petronas_Panorama_II.jpg/960px-Petronas_Panorama_II.jpg",
+"Guanajuato":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/Vista_a%C3%A9rea_de_Guanajuato.jpg/960px-Vista_a%C3%A9rea_de_Guanajuato.jpg",
+"Zanzibar":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dc/Departamento_de_museos_y_antig%C3%BCedades%2C_Stone_Town%2C_Zanz%C3%ADbar%2C_Tanzania%2C_2024-05-31%2C_DD_33-35_HDR.jpg/960px-Departamento_de_museos_y_antig%C3%BCedades%2C_Stone_Town%2C_Zanz%C3%ADbar%2C_Tanzania%2C_2024-05-31%2C_DD_33-35_HDR.jpg",
+"Warsaw Old Town":"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/35/Warsaw_Old_Town_Market_Square_10.JPG/960px-Warsaw_Old_Town_Market_Square_10.JPG",
+"Kuta":"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/Sunset%2C_Kuta%2C_Bali%2C_Indonesia%2C_20220825_1752_0877.jpg/960px-Sunset%2C_Kuta%2C_Bali%2C_Indonesia%2C_20220825_1752_0877.jpg",
+"Maafushi":"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/Maafushi_island.jpg/960px-Maafushi_island.jpg",
+"Hegra":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/27%2C_Hegra_%28Mada%27in_Salih%29%2C_Saudi_Arabia_-_53533896632.jpg/960px-27%2C_Hegra_%28Mada%27in_Salih%29%2C_Saudi_Arabia_-_53533896632.jpg",
+"Vaadhoo (Raa Atoll)":"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Dinoflagellate_Luminescense.jpg/960px-Dinoflagellate_Luminescense.jpg",
+"Hội An":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Lanterns_in_Hoi_An_2.jpg/960px-Lanterns_in_Hoi_An_2.jpg",
+"Sajek":"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/Sajek_khagrachari_26.jpg/960px-Sajek_khagrachari_26.jpg",
+"Amboseli National Park":"https://upload.wikimedia.org/wikipedia/commons/f/fa/Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg"
+};
+
+let imgCache={};
+try{imgCache=JSON.parse(localStorage.getItem("wtimg2")||"{}")}catch(e){}
+function saveCache(){try{localStorage.setItem("wtimg2",JSON.stringify(imgCache))}catch(e){}}
+async function wikiImg(title){
+  const good=u=>typeof u==="string"&&/^https?:\/\//.test(u);
+  if(good(imgCache[title]))return imgCache[title];
+  if(good(PRELOAD[title])){imgCache[title]=PRELOAD[title];saveCache();return imgCache[title];}
+  let src="";
+  try{
+    const ctl=new AbortController();
+    const kill=setTimeout(()=>ctl.abort(),10000);
+    const r=await fetch(WIKI+encodeURIComponent(title),{signal:ctl.signal});
+    clearTimeout(kill);
+    if(r.ok){const j=await r.json();src=(j.thumbnail&&j.thumbnail.source)||"";}
+  }catch(e){}
+  if(src){imgCache[title]=src;saveCache();} // only cache successes; failures retry next visit
+  return src;
+}
+
+/* --- Region chips --- */
+chipsEl.innerHTML=REGIONS.map(rg=>{
+  const n=rg==="All"?DATA.length:DATA.filter(c=>c.r===rg).length;
+  return `<button class="chipbtn${rg==="All"?" on":""}" data-r="${rg}">${rg} (${n})</button>`;
+}).join("")+`<span class="count" id="count"></span>`;
+chipsEl.addEventListener("click",e=>{
+  const b=e.target.closest(".chipbtn");if(!b)return;
+  region=b.dataset.r;
+  chipsEl.querySelectorAll(".chipbtn").forEach(x=>x.classList.toggle("on",x===b));
+  renderGrid();
+});
+
+/* --- Country grid --- */
+function cardHTML(c,i){
+  return `<button class="card" data-i="${i}">
+    <img class="flag" loading="lazy" src="https://flagcdn.com/w160/${c.iso}.png" alt="${c.n} flag">
+    <div class="cname">${c.n}</div>
+    <div class="cur">💱 Currency: ${c.c}</div>
+    <div class="meta"><span class="tag">${c.r}</span><span class="tag go">${c.p.length} Places →</span></div>
+  </button>`;
+}
+function renderGrid(){
+  const q=search.value.trim().toLowerCase();
+  const list=DATA.map((c,i)=>({c,i})).filter(({c})=>
+    (region==="All"||c.r===region)&&
+    (!q||c.n.toLowerCase().includes(q)||c.c.toLowerCase().includes(q)||
+     c.p.some(l=>l[0].toLowerCase().includes(q))));
+  $("#count").textContent=`Showing ${list.length} of ${DATA.length} countries`;
+  grid.innerHTML=list.length
+    ?list.map(({c,i})=>cardHTML(c,i)).join("")
+    :`<div class="empty">No country or place found 🧐 — try "Bali", "Taka" or "Japan".</div>`;
+}
+search.addEventListener("input",renderGrid);
+grid.addEventListener("click",e=>{
+  const card=e.target.closest(".card");
+  if(card)openCountry(+card.dataset.i);
+});
+
+/* --- Country detail --- */
+function openCountry(i){
+  const c=DATA[i];
+  barTitle.textContent=c.n;
+  head.innerHTML=`
+    <img class="flag" src="https://flagcdn.com/w320/${c.iso}.png" alt="${c.n} flag">
+    <div>
+      <h2>${c.n}</h2>
+      <div class="cur">💱 Currency: ${c.c}</div>
+      <div class="tags"><span class="tag">${c.r}</span><span class="tag go">Top ${c.p.length} Destinations</span></div>
+    </div>`;
+  locGrid.innerHTML=c.p.map((L,idx)=>`
+    <article class="loc">
+      <figure class="loc-img sk" id="fig${idx}" data-name="${L[0]}" data-country="${c.n}" data-iso="${c.iso}">
+        <span class="num">0${idx+1}</span>
+      </figure>
+      <div class="body">
+        <h3>${L[0]}</h3>
+        <p>${L[2]}</p>
+        <span class="zoom">🔍 Click photo to enlarge</span>
+      </div>
+    </article>`).join("");
+  gridView.classList.add("hide");
+  detailView.classList.remove("hide");
+  window.scrollTo({top:0});
+  c.p.forEach((L,idx)=>loadImg(idx,L[1],c.iso));
+}
+function noImg(fig){
+  fig.classList.remove("sk");
+  fig.classList.add("noimg");
+  fig.innerHTML=`<img class="fl" src="https://flagcdn.com/w160/${fig.dataset.iso}.png" alt=""><span class="nophoto">${fig.dataset.name} · Photo coming soon</span>`;
+}
+async function loadImg(idx,title,iso){
+  const fig=document.getElementById("fig"+idx);
+  if(!fig)return;
+  const src=await wikiImg(title);
+  if(!fig.isConnected)return;
+  if(!src){noImg(fig);return;}
+  const img=new Image();
+  img.alt=fig.dataset.name;
+  let tries=0;
+  img.onload=()=>{
+    if(!fig.isConnected)return;
+    fig.classList.remove("sk");
+    fig.appendChild(img);
+    fig.dataset.thumb=img.src;
+    fig.dataset.big=img.src.replace(/\/\d+px-/,"/1024px-");
+  };
+  img.onerror=()=>{
+    tries++;
+    if(tries===1){img.src=src;} // sharper render failed — fall back to the stored thumb
+    else{noImg(fig);}
+  };
+  img.src=src.replace(/\/330px-/,"/640px-");
+  fig.classList.add("has");
+  fig.addEventListener("click",()=>openLb(fig));
+}
+
+/* --- Lightbox --- */
+const lb=$("#lb"),lbImg=$("#lbImg"),lbCap=$("#lbCap"),lbSub=$("#lbSub");
+function openLb(fig){
+  lbCap.textContent=fig.dataset.name;
+  lbSub.textContent=fig.dataset.country+" · Photo: Wikipedia / Wikimedia Commons";
+  lbImg.onerror=()=>{lbImg.onerror=null;lbImg.src=fig.dataset.thumb;};
+  lbImg.src=fig.dataset.big||fig.dataset.thumb;
+  lbImg.alt=fig.dataset.name;
+  lb.classList.remove("hide");
+  document.body.style.overflow="hidden";
+}
+function closeLb(){lb.classList.add("hide");document.body.style.overflow="";}
+$("#lbClose").addEventListener("click",closeLb);
+lb.addEventListener("click",e=>{if(e.target===lb)closeLb();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!lb.classList.contains("hide"))closeLb();});
+
+/* --- Back to country list --- */
+$("#backBtn").addEventListener("click",()=>{
+  detailView.classList.add("hide");
+  gridView.classList.remove("hide");
+  window.scrollTo({top:0});
+});
+
+renderGrid();
+</script>
+</body>
+</html>
